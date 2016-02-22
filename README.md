@@ -1,4 +1,4 @@
-wiitracer
+WiiScape
 =========
 
-wii/gc pathtracer
+wii/gc ... thing
