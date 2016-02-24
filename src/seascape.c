@@ -206,6 +206,23 @@ guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector ey
 	return color;
 }
 
+// tracing
+guVector getNormal(sea_t* sea, guVector p, f32 eps) {
+	guVector n;
+	guVector pX = (guVector) { p.x + eps, p.y, p.z };
+	guVector pZ = (guVector) { p.x, p.y, p.z + eps };
+	n.y = map(sea, p, sea->ITER_FRAGMENT);
+	n.x = map(sea, pX, sea->ITER_FRAGMENT) - n.y;
+	n.z = map(sea, pZ, sea->ITER_FRAGMENT) - n.y;
+	n.y = eps;
+	guVecNormalize(&n);
+	return n;
+}
+
+float heightMapTracing(guVector ori, guVector dir, guVector* p) {
+	return 0;
+}
+
 guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	guVec2 uv;
 	//TODO Optimize with PS ops?
@@ -233,7 +250,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	heightMapTracing(ori, dir, &p);
 	guVector dist;
 	guVecSub(&p, &ori, &dist);
-	guVector n = getNormal(p, guVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
+	guVector n = getNormal(sea, p, guVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
 	guVector light = (guVector){ 0, 1, 0.8f };
 	guVecNormalize(&light);
 
