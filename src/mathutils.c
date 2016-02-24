@@ -147,6 +147,12 @@ guVec2 guVec2Add(guVec2 a, guVec2 b) {
 	return (guVec2) { a.x + b.x, a.y + b.y };
 }
 
+guVec2 guVec2MatMul(Mtx22 m, guVec2 v) {
+	return (guVec2) {
+		m.a1 * v.x + m.a2 * v.y,
+		m.b1 * v.x + m.b2 * v.y
+	};
+}
 guVec2 guVec2Sin(guVec2 a) {
 	return (guVec2) { sinf(a.x), sinf(a.y) };
 }

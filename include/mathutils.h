@@ -127,6 +127,7 @@ guVec2 guVec2Mul(guVec2 a, guVec2 b);
 
 guVec2 guVec2Add(guVec2 a, guVec2 b);
 
+guVec2 guVec2MatMul(Mtx22 m, guVec2 v);
 guVec2 guVec2Sin(guVec2 a);
 
 guVec2 guVec2Cos(guVec2 a);

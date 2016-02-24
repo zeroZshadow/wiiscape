@@ -122,7 +122,7 @@ f32 sea_octave(guVec2 uv, f32 choppy) {
 
 // sky
 guVector getSkyColor(guVector e) {
-	e.y = maxf(e.y, 0);
+	e.y = fmaxf(e.y, 0);
 	guVector ret;
 	ret.x = powf(1 - e.y, 2);
 	ret.y = 1 - e.y;
@@ -131,16 +131,60 @@ guVector getSkyColor(guVector e) {
 }
 
 // sea
+float map(sea_t* sea, guVector p, u8 iterations) {
+	f32 freq = sea->SEA_FREQ;
+	f32 amp_ = sea->SEA_HEIGHT;
+	f32 choppy = sea->SEA_CHOPPY;
+	guVec2 uv = (guVec2) { p.x * 0.75f, p.z };
+
+	f32 d = 0, h = 0;
+	for (u8 i = 0; i < iterations; i++) {
+		guVec2 oct_1 = (guVec2) {
+			(uv.x + sea->SEA_TIME)*freq,
+			(uv.y + sea->SEA_TIME)*freq,
+		};
+		d = sea_octave(oct_1, choppy);
+		guVec2 oct_2 = (guVec2) {
+			(uv.x - sea->SEA_TIME)*freq,
+			(uv.y - sea->SEA_TIME)*freq,
+		};
+		d += sea_octave(oct_2, choppy);
+		h += d * amp_;
+		uv = guVec2MatMul(sea->octave_m, uv);
+		freq *= 1.9f;
+		amp_ *= 0.22f;
+		choppy = mix(choppy, 1, 0.2f);
+	}
+	return p.y - h;
+}
+
 guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector eye, guVector dist) {
 	guVector neye = (guVector) { -eye.x, -eye.y, -eye.z };
-	float fresnel = 1 - maxf(guVecDotProduct(&n, &neye), 0);
+	f32 fresnel = 1 - fmaxf(guVecDotProduct(&n, &neye), 0);
 	fresnel = powf(fresnel, 3) * 0.65f;
 
 	guVector reflected = getSkyColor(reflect(eye, n));
-	guVector refracted_1;
-	refracted_1 = (guVector) { sea->SEA_WATER_COLOR.x * 0.12f, sea->SEA_WATER_COLOR.y * 0.12f };
-	
-	guVector refracted;	guVecAdd(&(sea->SEA_BASE), &refracted_1, &refracted);
+
+	f32 refracted_1 = diffuse(n, l, 80);	
+	guVector refracted = (guVector) {
+		sea->SEA_BASE.x + refracted_1 * sea->SEA_WATER_COLOR.x * 0.12f,
+		sea->SEA_BASE.y + refracted_1 * sea->SEA_WATER_COLOR.y * 0.12f,
+		sea->SEA_BASE.z + refracted_1 * sea->SEA_WATER_COLOR.z * 0.12f,
+	};
+
+	guVector color = (guVector) {
+		mix(refracted.x, reflected.x, fresnel),
+		mix(refracted.y, reflected.y, fresnel),
+		mix(refracted.z, reflected.z, fresnel),
+	};
+
+	f32 atten = fmaxf(1 - guVecDotProduct(&dist, &dist) * 0.001f, 0);
+	f32 spec = specular(n, l, eye, 60);
+	color = (guVector) {
+		color.x + (sea->SEA_WATER_COLOR.x * (p.y - sea->SEA_HEIGHT) * 0.18f * atten) + spec,
+		color.y + (sea->SEA_WATER_COLOR.y * (p.y - sea->SEA_HEIGHT) * 0.18f * atten) + spec,
+		color.z + (sea->SEA_WATER_COLOR.z * (p.y - sea->SEA_HEIGHT) * 0.18f * atten) + spec,
+	};
 
 	return color;
 }
@@ -151,9 +195,10 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
 
-	f32 time = (float)sea->time * 0.3;
+	f32 time = (f32)sea->time * 0.3;
 
 	// ray
+	//TODO Done once, do outside pixel loop
 	guVector ang = (guVector) { sinf(time*3), sinf(time)*0.2f+0.3f, time };
 	guVector ori = (guVector) { 0, 3.5f, time * 5 };
 
@@ -162,11 +207,14 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	dir_1.z += guVecMag(&dir_1) * 0.15f;
 	muVectorNormalize(&dir_1);
 
-	guVector dir; guVecMultiply(fromEuler(ang), &dir_1, &dir);
+	guVector dir;
+	guVecMultiply(fromEuler(ang), &dir_1, &dir);
 
 	// tracing
-	guVector p; heightMapTracing(ori, dir, &p);
-	guVector dist; guVecSub(&p, &ori, &dist);
+	guVector p;
+	heightMapTracing(ori, dir, &p);
+	guVector dist;
+	guVecSub(&p, &ori, &dist);
 	guVector n = getNormal(p, guVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
 	guVector light = (guVector){ 0, 1, 0.8f };
 	muVectorNormalize(&light);
