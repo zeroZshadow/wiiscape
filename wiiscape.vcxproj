@@ -61,17 +61,12 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\camera.c" />
     <ClCompile Include="src\gxutils.c" />
     <ClCompile Include="src\main.c" />
-    <ClCompile Include="src\material.c" />
     <ClCompile Include="src\mathutils.c" />
     <ClCompile Include="src\mtrand.c" />
-    <ClCompile Include="src\pathtracer.c" />
-    <ClCompile Include="src\plane.c" />
     <ClCompile Include="src\profiler.c" />
-    <ClCompile Include="src\scene.c" />
-    <ClCompile Include="src\sphere.c" />
+    <ClCompile Include="src\seascape.c" />
     <ClCompile Include="src\timer.c" />
   </ItemGroup>
   <ItemGroup>
@@ -81,19 +76,12 @@
     <None Include="MakefileWii" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\gxutils.h" />
-    <ClInclude Include="include\hitinfo.h" />
-    <ClInclude Include="include\material.h" />
     <ClInclude Include="include\mathutils.h" />
     <ClInclude Include="include\mtrand.h" />
     <ClInclude Include="include\mu.h" />
-    <ClInclude Include="include\pathtracer.h" />
-    <ClInclude Include="include\plane.h" />
     <ClInclude Include="include\profiler.h" />
-    <ClInclude Include="include\ray.h" />
-    <ClInclude Include="include\scene.h" />
-    <ClInclude Include="include\sphere.h" />
+    <ClInclude Include="include\seascape.h" />
     <ClInclude Include="include\timer.h" />
     <ClInclude Include="include\types.h" />
   </ItemGroup>
