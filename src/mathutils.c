@@ -176,5 +176,6 @@ guVector guVecReflect(guVector p, guVector n) {
 }
 
 f32 smoothstep(f32 a, f32 b, f32 t) {
-	return mix(a, b, t);
+	t = fminf(fmaxf((t - a) / (b - a), 0), 1);
+	return t*t*(3-2*t);
 }
