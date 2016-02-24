@@ -219,9 +219,43 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 	return n;
 }
 
-float heightMapTracing(guVector ori, guVector dir, guVector* p) {
+float heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 	f32 tm = 0;
-	return 0;
+	f32 tx = 1000;
+
+	guVector hxVec = (guVector) {
+		ori.x + dir.x * tx,
+		ori.y + dir.y * tx,
+		ori.z + dir.z * tx
+	};
+	f32 hx = map(sea, hxVec, sea->ITER_GEOMETRY);
+	if (hx > 0) {
+		return tx;
+	}
+
+	guVector hmVec = (guVector) {
+		ori.x + dir.x * tm,
+		ori.y + dir.y * tm,
+		ori.z + dir.z * tm
+	};
+	f32 hm = map(sea, hmVec, sea->ITER_GEOMETRY);
+	f32 tmid = 0;
+	u8 i;
+	for (i = 0; i < sea->NUM_STEPS; i++) {
+		tmid = mix(tm, tx, hm / (hm - hx));
+		p->x = ori.x + dir.x * tmid;
+		p->y = ori.y + dir.y * tmid;
+		p->z = ori.z + dir.z * tmid;
+		f32 hmid = map(sea, *p, sea->ITER_GEOMETRY);
+		if (hmid < 0) {
+			tx = tmid;
+			hx = hmid;
+		} else {
+			tm = tmid;
+			hm = hmid;
+		}
+	}
+	return tmid;
 }
 
 guVector SEA_pixel(sea_t* sea, guVec2 coord) {
@@ -248,7 +282,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 
 	// tracing
 	guVector p;
-	heightMapTracing(ori, dir, &p);
+	heightMapTracing(sea, ori, dir, &p);
 	guVector dist;
 	muVecSub(&p, &ori, &dist);
 	const guVector n = getNormal(sea, p, muVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
