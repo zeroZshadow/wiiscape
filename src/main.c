@@ -29,9 +29,11 @@ int main() { //int argc, char **argv) {
 	GXU_renderPixelBuffer();
 	GXU_done();
 
+	sea_t* sea = SEA_create();
+
 	isRunning = TRUE;
 	while (isRunning) {
-		SEA_draw();
+		SEA_draw(sea);
 
 		// Render buffer to screen
 		//TODO: Throw this on a thread
