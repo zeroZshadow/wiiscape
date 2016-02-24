@@ -111,13 +111,6 @@ guVector Vector(f32 x, f32 y, f32 z) {
 	return res;
 }
 
-u32 seed = 0xDEADBEEF;
-f32 fioraRand() {
-	seed = 214013 * seed + 2531011;
-	u32 temp = (seed & 0x007FFFFF) | 0x3F800000;
-	return *(f32*)&temp - 1.0f;
-}
-
 void guVecMax(guVector* vector, f32 max) {
 	vector->x = vector->x > max ? max : vector->x;
 	vector->y = vector->y > max ? max : vector->y;
