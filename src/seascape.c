@@ -1,9 +1,11 @@
 #include "seascape.h"
+
 #include <malloc.h>
 #include <stdio.h>
 
 #include "mu.h"
 #include "gxutils.h"
+#include "mathutils.h"
 
 sea_t* SEA_create() {
 	sea_t* context = malloc(sizeof(sea_t));
@@ -31,12 +33,12 @@ void SEA_draw(sea_t* sea) {
 				for (ix = 0; ix < TILESIZE; ++ix) {
 					// Calculate UV coordinate
 					// TODO Correct for aspect ratio
-					guVector uv;
-					uv.x = (x + ix) / (float) width;
-					uv.y = (y + iy) / (float) height;
+					guVector coord;
+					coord.x = ix + x;
+					coord.y = iy + y;
 
 					//Get pixel color for tile
-					guVector color = SEA_pixel(sea, uv);
+					guVector color = SEA_pixel(sea, coord);
 
 					//Convert to u32
 					//TODO: WRITE CLAMP IN PSQ
@@ -52,9 +54,11 @@ void SEA_draw(sea_t* sea) {
 	}
 }
 
-guVector SEA_pixel(sea_t* ctx, guVector coord) {
+guVector SEA_pixel(sea_t* sea, guVector coord) {
 	guVector uv;
 	//TODO Optimize with PS ops?
-	uv.x = coord.x / ctx->resolution.x;
-	uv.x = coord.y / ctx->resolution.y;
+	uv.x = coord.x / sea->resolution.x;
+	uv.y = coord.y / sea->resolution.y;
+
+	return uv;
 }

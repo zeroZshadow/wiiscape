@@ -42,9 +42,6 @@
     <ClCompile Include="src\mathutils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mtrand.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\profiler.c">
       <Filter>Source Files\profiler</Filter>
     </ClCompile>
@@ -65,9 +62,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\mathutils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\mtrand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\profiler.h">

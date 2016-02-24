@@ -2,7 +2,6 @@
 #include <gccore.h>
 #include <stdio.h>
 
-#include "mtrand.h"
 #include "gxutils.h"
 #include "seascape.h"
 #include "mathutils.h"
@@ -12,8 +11,6 @@ void OnResetCalled();
 
 int main() { //int argc, char **argv) {
 	SYS_SetResetCallback(OnResetCalled);
-
-	FncMtSrand(time(NULL));
 
 	// Initialize graphics
 	GXU_init();

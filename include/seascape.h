@@ -21,8 +21,10 @@ typedef struct {
 	Mtx33 octave_m;
 } sea_t;
 
-void SEA_draw();
+sea_t* SEA_create();
 
-guVector SEA_pixel(sea_t* ctx, guVector coord);
+void SEA_draw(sea_t* sea);
+
+guVector SEA_pixel(sea_t* sea, guVector coord);
 
 #endif

@@ -2,7 +2,6 @@
 #include "mu.h"
 #include <math.h>
 #include <ogc/gu.h>
-#include "mtrand.h"
 
 void EulerToQuaternion(guQuaternion* q, const f32 rX, const f32 rY, const f32 rZ) {
 	guVector vec;
@@ -117,26 +116,6 @@ f32 fioraRand() {
 	seed = 214013 * seed + 2531011;
 	u32 temp = (seed & 0x007FFFFF) | 0x3F800000;
 	return *(f32*)&temp - 1.0f;
-}
-
-guVector RandomVectorInHemisphere(guVector* normal) {
-	// Jacco Bikker
-	// Altered by Martijn Gerkes
-	guVector A, B;
-
-	vecPerpendicular(normal, &A);
-	muVecCross(&A, normal, &B);
-
-	f32 rand[2] = { FncMtRandR32(), FncMtRandR32() };
-
-	muRandScale(&A, &B, rand);
-
-	muVecAdd(&A, &B, &B);
-	muVecSub(&B, normal, &B);
-	muVecNormalize(&B);
-	muVecInvert(&B, &B);
-
-	return B;
 }
 
 void guVecMax(guVector* vector, f32 max) {

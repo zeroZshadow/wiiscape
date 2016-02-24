@@ -64,7 +64,6 @@
     <ClCompile Include="src\gxutils.c" />
     <ClCompile Include="src\main.c" />
     <ClCompile Include="src\mathutils.c" />
-    <ClCompile Include="src\mtrand.c" />
     <ClCompile Include="src\profiler.c" />
     <ClCompile Include="src\seascape.c" />
     <ClCompile Include="src\timer.c" />
@@ -78,7 +77,6 @@
   <ItemGroup>
     <ClInclude Include="include\gxutils.h" />
     <ClInclude Include="include\mathutils.h" />
-    <ClInclude Include="include\mtrand.h" />
     <ClInclude Include="include\mu.h" />
     <ClInclude Include="include\profiler.h" />
     <ClInclude Include="include\seascape.h" />
