@@ -129,15 +129,21 @@ void guVec2Modf(guVec2 v, guVec2* f, guVec2* i) {
 }
 
 f32 guVec2Dot(guVec2 a, guVec2 b) {
-	return  a.x * b.x + a.y * b.y;
+	return  (a.x * b.x) + (a.y * b.y);
 }
 
 guVec2 guVec2Mul(guVec2 a, guVec2 b) {
-	return (guVec2) { a.x * b.x, a.y * b.y };
+	return (guVec2) { 
+		a.x * b.x,
+		a.y * b.y
+	};
 }
 
 guVec2 guVec2Add(guVec2 a, guVec2 b) {
-	return (guVec2) { a.x + b.x, a.y + b.y };
+	return (guVec2) {
+		a.x + b.x,
+		a.y + b.y
+	};
 }
 
 guVec2 guVec2MatMul(Mtx22 m, guVec2 v) {
@@ -147,19 +153,31 @@ guVec2 guVec2MatMul(Mtx22 m, guVec2 v) {
 	};
 }
 guVec2 guVec2Sin(guVec2 a) {
-	return (guVec2) { sinf(a.x), sinf(a.y) };
+	return (guVec2) {
+		sinf(a.x),
+		sinf(a.y)
+	};
 }
 
 guVec2 guVec2Cos(guVec2 a) {
-	return (guVec2) { cosf(a.x), cosf(a.y) };
+	return (guVec2) {
+		cosf(a.x),
+		cosf(a.y)
+	};
 }
 
 guVec2 guVec2Abs(guVec2 a) {
-	return (guVec2) { fabs(a.x), fabs(a.y) };
+	return (guVec2) {
+		fabs(a.x),
+		fabs(a.y)
+	};
 }
 
 guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f) {
-	return (guVec2) { mix(a.x, b.x, f.x), mix(a.y, b.y, f.y) };
+	return (guVec2) {
+		mix(a.x, b.x, f.x),
+		mix(a.y, b.y, f.y)
+	};
 }
 
 f32 mix(f32 a, f32 b, f32 f)

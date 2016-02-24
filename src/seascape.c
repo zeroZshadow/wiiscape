@@ -16,20 +16,20 @@ sea_t* SEA_create(u32 width, u32 height) {
 
 	context->resolution = (guVec2){ width, height };
 
-	context->NUM_STEPS = 4;
+	context->NUM_STEPS = 2;
 	context->PI = 3.1415;
 	context->EPSILON = 1e-3;
 	context->EPSILON_NRM = 0.1f / (float)width;
 
-	context->ITER_GEOMETRY = 2;
-	context->ITER_FRAGMENT = 4;
+	context->ITER_GEOMETRY = 1;
+	context->ITER_FRAGMENT = 1;
 	context->SEA_HEIGHT = 0.6;
 	context->SEA_CHOPPY = 4;
 	context->SEA_SPEED = 0.8;
 	context->SEA_FREQ = 0.16;
 	context->SEA_BASE = (guVector){ 0.1, 0.19, 0.22 };
 	context->SEA_WATER_COLOR = (guVector){ 0.8, 0.9, 0.6 };
-	context->octave_m = (Mtx22) { 1.6, 1.6, -1.2, 1.6 };
+	context->octave_m = (Mtx22) { 1.6, 1.2, -1.2, 1.6 };
 
 	return context;
 }
@@ -46,7 +46,7 @@ void SEA_draw(sea_t* sea) {
 	u32 x, y, xb, yb;
 
 	sea->time += 0.1f;
-	sea->SEA_TIME = sea->time * sea->SEA_SPEED;
+	sea->SEA_TIME = 0; // sea->time * sea->SEA_SPEED;
 
 	for (yb = 0; yb < height_blocks; ++yb) {
 		for (xb = 0; xb < width_blocks; ++xb) {
@@ -76,31 +76,43 @@ void SEA_draw(sea_t* sea) {
 
 // math
 void fromEuler(guVector ang, Mtx m) {
-	guVec2 a1 = (guVec2) { sinf(ang.x), cos(ang.x) };
-	guVec2 a2 = (guVec2) { sinf(ang.y), cos(ang.y) };
-	guVec2 a3 = (guVec2) { sinf(ang.z), cos(ang.z) };
+	// TODO use sincos to get it in 1 go
+	guVec2 a1 = (guVec2) { sinf(ang.x), cosf(ang.x) };
+	guVec2 a2 = (guVec2) { sinf(ang.y), cosf(ang.y) };
+	guVec2 a3 = (guVec2) { sinf(ang.z), cosf(ang.z) };
 	m[0][0] = a1.y*a3.y + a1.x*a2.x*a3.x;
 	m[0][1] = a1.y*a2.x*a3.x + a3.y*a1.x;
 	m[0][2] = -a2.y*a3.x;
+	m[0][3] = 0;
+
 	m[1][0] = -a2.y*a1.x;
 	m[1][1] = a1.y*a2.y;
 	m[1][2] = a2.x;
+	m[1][3] = 0;
+
 	m[2][0] = a3.y*a1.x*a2.x + a1.y*a3.x;
 	m[2][1] = a1.x*a3.x - a1.y*a3.y*a2.x;
 	m[2][2] = a2.y*a3.y;
+	m[2][3] = 0;
+
 }
 
 f32 hash(guVec2 p) {
-	float h = guVec2Dot(p, (guVec2) { 127.1, 311.7 });
+	float h = guVec2Dot(p, (guVec2) { 127.1f, 311.7f });
 	float i;
-	return modff(sinf(h)*43758.5453123f, &i);
+	return modff(sinf(h) * 43758.5453123, &i);
 }
 
 f32 noise(guVec2 p) {
-	guVec2 i, f;
+	return 0;
+
+	guVec2 f, i;
 	guVec2Modf(p, &f, &i);
 
-	guVec2 tmp = (guVec2) { 3.0 - 2.0*f.x, 3.0 - 2.0*f.y };
+	guVec2 tmp = (guVec2) {
+		3.0 - 2.0 * f.x,
+		3.0 - 2.0 * f.y
+	};
 	guVec2 u = guVec2Mul(f, guVec2Mul(f, tmp));
 
 	f32 h0 = hash(i);
@@ -108,14 +120,16 @@ f32 noise(guVec2 p) {
 	f32 h2 = hash(guVec2Add(i, (guVec2) { 0.0, 1.0 }));
 	f32 h3 = hash(guVec2Add(i, (guVec2) { 1.0, 1.0 }));
 
-	return -1.0 + 2.0 * mix(mix(h0, h1, u.x), mix(h2, h3, u.x), u.y);
+	float r = -1.0 + 2.0 * mix(mix(h0, h1, u.x), mix(h2, h3, u.x), u.y);
+
+	return r;
 }
 
 f32 diffuse(guVector n, guVector l, f32 p) {
 	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
 }
 f32 specular(guVector n, guVector l, guVector e, float s) {
-	float nrm = (s + 8.0) / (3.1415 * 8.0);
+	float nrm = (s + 8.0f) / (3.1415f * 8.0f);
 
 	guVector reflect = guVecReflect(e, n);
 	float dot = muVecDotProduct(&reflect, &l);
@@ -264,7 +278,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (1.0-(coord.y / sea->resolution.y)) * 2 - 1;
 
-	const f32 time = sea->time * 0.3;
+	const f32 time = 0;//sea->time * 0.3;
 
 	// ray
 	//TODO Done once, do outside pixel loop
@@ -278,11 +292,12 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 
 	Mtx dirMtx;
 	fromEuler(ang, dirMtx);
-	muVecMultiply(dirMtx, &dir, &dir);
+	guVecMultiplySR(dirMtx, &dir, &dir);
 
 	// tracing
-	guVector p;
+	guVector p = (guVector) {0,0};
 	heightMapTracing(sea, ori, dir, &p);
+
 	guVector dist;
 	muVecSub(&p, &ori, &dist);
 	const guVector n = getNormal(sea, p, muVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
