@@ -26,33 +26,32 @@ void SEA_draw(sea_t* sea) {
 	// Since we do not have a massive amount of memory, we have to pathtrace is the tiling order so we only have to store 4*4 pixels of data
 	const u32 width = sea->resolution.x;
 	const u32 height = sea->resolution.y;
+	const u32 width_blocks = width / TILESIZE;
+	const u32 height_blocks = height / TILESIZE;
 
-	u16 x, y, ix, iy;
-
-	for (y = 0; y < height; y += TILESIZE) {
-		for (x = 0; x < width; x += TILESIZE) {
+	u32 x, y, xb, yb;
+	for (yb = 0; yb < height_blocks; ++yb) {
+		for (xb = 0; xb < width_blocks; ++xb) {
 			//This is a single tile
-			for (iy = 0; iy < TILESIZE; ++iy) {
-				for (ix = 0; ix < TILESIZE; ++ix) {
+			for (y = 0; y < TILESIZE; ++y) {
+				for (x = 0; x < TILESIZE; ++x) {
 					// Calculate UV coordinate
 					// TODO Correct for aspect ratio
 					guVector coord;
-					coord.x = ix + x;
-					coord.y = iy + y;
+					coord.x = (xb * TILESIZE) + x;
+					coord.y = (yb * TILESIZE) + y;
 
 					//Get pixel color for tile
 					guVector color = SEA_pixel(sea, coord);
 
 					//Convert to u32
-					//TODO: WRITE CLAMP IN PSQ
-					guVecMax(&color, 1.0f);
-					guVecMin(&color, 0.0f);
-					datatile[ix + (iy * TILESIZE)] = GXU_vectorToColorData(&color);
+					//TODO: Clamp color?
+					datatile[x + (y * TILESIZE)] = GXU_vectorToColorData(&color);
 				}
 			}
 
 			//Entire tile rendered, write to texture
-			GXU_copyTilePixelBuffer(datatile, x / TILESIZE, y / TILESIZE);
+			GXU_copyTilePixelBuffer(datatile, xb, yb);
 		}
 	}
 }
