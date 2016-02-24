@@ -2,6 +2,7 @@
 
 #include <malloc.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "mu.h"
 #include "gxutils.h"
@@ -80,4 +81,25 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
 
 	return (guVector) { uv.x, uv.y, 0 };
+}
+
+float hash(guVec2 p) {
+	float h = guVec2Dot(p, (guVec2) { 127.1, 311.7 });
+	float i;
+	return modff(sinf(h)*43758.5453123f, &i);
+}
+
+float noise(guVec2 p) {
+	guVec2 i, f;
+	guVec2Modf(p, &f, &i);
+
+	guVec2 tmp = (guVec2) { 3.0 - 2.0*f.x, 3.0 - 2.0*f.y };
+	guVec2 u = guVec2Mul(f, guVec2Mul(f, tmp));
+
+	float h0 = hash(i);
+	float h1 = hash(guVec2Add(i, (guVec2) { 1.0, 0.0 }));
+	float h2 = hash(guVec2Add(i, (guVec2) { 0.0, 1.0 }));
+	float h3 = hash(guVec2Add(i, (guVec2) { 1.0, 1.0 }));
+
+	return -1.0 + 2.0 * mix(mix(h0, h1, u.x),	mix(h2, h3, u.x), u.y);
 }

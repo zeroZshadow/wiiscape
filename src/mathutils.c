@@ -129,3 +129,25 @@ void guVecMin(guVector* vector, f32 min) {
 	vector->y = vector->y < min ? min : vector->y;
 	vector->z = vector->z < min ? min : vector->z;
 }
+
+void guVec2Modf(guVec2 v, guVec2* f, guVec2* i) {
+	f->x = modff(v.x, &i->x);
+	f->y = modff(v.y, &i->y);
+}
+
+f32 guVec2Dot(guVec2 a, guVec2 b) {
+	return  a.x * b.x + a.y * b.y;
+}
+
+guVec2 guVec2Mul(guVec2 a, guVec2 b) {
+	return (guVec2) { a.x * b.x, a.y * b.y };
+}
+
+guVec2 guVec2Add(guVec2 a, guVec2 b) {
+	return (guVec2) { a.x + b.x, a.y + b.y };
+}
+
+f32 mix(f32 a, f32 b, f32 f)
+{
+	return a + f * (b - a);
+}

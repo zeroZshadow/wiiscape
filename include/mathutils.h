@@ -117,6 +117,16 @@ void guVecMax(guVector* vector, f32 max);
 
 void guVecMin(guVector* vector, f32 min);
 
+void guVec2Modf(guVec2 v, guVec2* f, guVec2* i);
+
+f32 guVec2Dot(guVec2 a, guVec2 b);
+
+guVec2 guVec2Mul(guVec2 a, guVec2 b);
+
+guVec2 guVec2Add(guVec2 a, guVec2 b);
+
+f32 mix(f32 a, f32 b, f32 f);
+
 #endif
 
 
