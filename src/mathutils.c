@@ -151,3 +151,11 @@ f32 mix(f32 a, f32 b, f32 f)
 {
 	return a + f * (b - a);
 }
+
+guVector guVecReflect(guVector p, guVector n) {
+	guVector r;
+	float dot = muVecDotProduct(&p, &n) * 2;
+	muVecScale(&n, &r, dot);
+	guVecSub(&r, &p, &r);
+	return r;
+}
