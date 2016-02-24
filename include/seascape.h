@@ -7,7 +7,7 @@
 
 typedef struct {
 	guVec2 resolution;
-	u64 time;
+	f32 time;
 
 	u8 NUM_STEPS;
 	float PI;

@@ -16,8 +16,8 @@ int main() { //int argc, char **argv) {
 	GXU_init();
 
 	// Frame buffer
-	u16 renderWidth = vmode->viWidth >> 1;
-	u16 renderHeight = vmode->viHeight >> 1;
+	u16 renderWidth = vmode->viWidth >> 4;
+	u16 renderHeight = vmode->viHeight >> 4;
 
 	GXU_createPixelBuffer(renderWidth, renderHeight);
 	GXU_clearPixelBuffer(0xFF000000);

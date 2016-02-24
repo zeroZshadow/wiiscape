@@ -45,8 +45,8 @@ void SEA_draw(sea_t* sea) {
 
 	u32 x, y, xb, yb;
 
-	sea->time++;
-	sea->SEA_TIME = (float)sea->time * sea->SEA_SPEED;
+	sea->time += 0.1f;
+	sea->SEA_TIME = sea->time * sea->SEA_SPEED;
 
 	for (yb = 0; yb < height_blocks; ++yb) {
 		for (xb = 0; xb < width_blocks; ++xb) {
@@ -220,6 +220,7 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 }
 
 float heightMapTracing(guVector ori, guVector dir, guVector* p) {
+	f32 tm = 0;
 	return 0;
 }
 
@@ -229,7 +230,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
 
-	f32 time = (f32)sea->time * 0.3;
+	f32 time = sea->time * 0.3;
 
 	// ray
 	//TODO Done once, do outside pixel loop
