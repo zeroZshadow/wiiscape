@@ -3,12 +3,16 @@
 
 #include <gccore.h>
 
+#include "mathutils.h"
+
 typedef struct {
 	guVector resolution;
+	u64 time;
+
 	u8 NUM_STEPS;
 	float PI;
 	float EPSILON;
-	float EPISON_NRM;
+	float EPSILON_NRM;
 	u8 ITER_GEOMETRY;
 	u8 ITER_FRAGMENT;
 	float SEA_HEIGHT;
@@ -18,7 +22,7 @@ typedef struct {
 	guVector SEA_BASE;
 	guVector SEA_WATER_COLOR;
 	float SEA_TIME;
-	Mtx33 octave_m;
+	Mtx22 octave_m;
 } sea_t;
 
 sea_t* SEA_create();

@@ -7,6 +7,10 @@
 
 #include <ogc/gu.h>
 
+typedef struct {
+	f32 a1, b1, a2, b2;
+} Mtx22;
+
 /*! \brief Convert Euler angles to a quaternion
  *  \param[out] q Result quaternion
  *  \param[in] rX X axis Euler angle
