@@ -6,7 +6,7 @@
 #include "mathutils.h"
 
 typedef struct {
-	guVector resolution;
+	guVec2 resolution;
 	u64 time;
 
 	u8 NUM_STEPS;
@@ -29,6 +29,6 @@ sea_t* SEA_create();
 
 void SEA_draw(sea_t* sea);
 
-guVector SEA_pixel(sea_t* sea, guVector coord);
+guVector SEA_pixel(sea_t* sea, guVec2 coord);
 
 #endif

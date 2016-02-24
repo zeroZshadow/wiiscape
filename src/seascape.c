@@ -13,8 +13,7 @@ sea_t* SEA_create(u32 width, u32 height) {
 		return 0;
 	}
 
-	context->resolution.x = width;
-	context->resolution.y = height;
+	context->resolution = (guVec2){ width, height };
 
 	context->NUM_STEPS = 8;
 	context->PI = 3.1415;
@@ -55,7 +54,7 @@ void SEA_draw(sea_t* sea) {
 				for (x = 0; x < TILESIZE; ++x) {
 					// Calculate UV coordinate
 					// TODO Correct for aspect ratio
-					guVector coord;
+					guVec2 coord;
 					coord.x = (xb * TILESIZE) + x;
 					coord.y = (yb * TILESIZE) + y;
 
@@ -74,11 +73,11 @@ void SEA_draw(sea_t* sea) {
 	}
 }
 
-guVector SEA_pixel(sea_t* sea, guVector coord) {
-	guVector uv;
+guVector SEA_pixel(sea_t* sea, guVec2 coord) {
+	guVec2 uv;
 	//TODO Optimize with PS ops?
-	uv.x = coord.x / sea->resolution.x;
-	uv.y = coord.y / sea->resolution.y;
+	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
+	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
 
-	return uv;
+	return (guVector) { uv.x, uv.y, 0 };
 }
