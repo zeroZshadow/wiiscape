@@ -147,6 +147,13 @@ guVec2 guVec2Add(guVec2 a, guVec2 b) {
 	return (guVec2) { a.x + b.x, a.y + b.y };
 }
 
+guVec2 guVec2MatMul(Mtx22 m, guVec2 v) {
+	return (guVec2) {
+		m.a1 * v.x + m.a2 * v.y,
+		m.b1 * v.x + m.b2 * v.y
+	};
+}
+
 f32 mix(f32 a, f32 b, f32 f)
 {
 	return a + f * (b - a);

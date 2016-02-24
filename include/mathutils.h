@@ -125,6 +125,8 @@ guVec2 guVec2Mul(guVec2 a, guVec2 b);
 
 guVec2 guVec2Add(guVec2 a, guVec2 b);
 
+guVec2 guVec2MatMul(Mtx22 m, guVec2 v);
+
 f32 mix(f32 a, f32 b, f32 f);
 
 #endif
