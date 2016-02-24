@@ -16,13 +16,13 @@ sea_t* SEA_create(u32 width, u32 height) {
 
 	context->resolution = (guVec2){ width, height };
 
-	context->NUM_STEPS = 8;
+	context->NUM_STEPS = 4;
 	context->PI = 3.1415;
 	context->EPSILON = 1e-3;
 	context->EPSILON_NRM = 0.1 / (float)height;
 
-	context->ITER_FRAGMENT = 3;
-	context->ITER_GEOMETRY = 5;
+	context->ITER_GEOMETRY = 2;
+	context->ITER_FRAGMENT = 4;
 	context->SEA_HEIGHT = 0.6;
 	context->SEA_CHOPPY = 4;
 	context->SEA_SPEED = 0.8;
