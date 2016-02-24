@@ -16,8 +16,8 @@ int main() { //int argc, char **argv) {
 	GXU_init();
 
 	// Frame buffer
-	u16 renderWidth = vmode->viWidth >> 2;
-	u16 renderHeight = vmode->viHeight >> 2;
+	u16 renderWidth = vmode->viWidth >> 0;
+	u16 renderHeight = vmode->viHeight >> 0;
 
 	GXU_createPixelBuffer(renderWidth, renderHeight);
 	GXU_clearPixelBuffer(0xFF000000);
@@ -26,7 +26,7 @@ int main() { //int argc, char **argv) {
 	GXU_renderPixelBuffer();
 	GXU_done();
 
-	sea_t* sea = SEA_create();
+	sea_t* sea = SEA_create(renderWidth, renderHeight);
 
 	isRunning = TRUE;
 	while (isRunning) {

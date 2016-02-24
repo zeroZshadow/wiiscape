@@ -7,12 +7,15 @@
 #include "gxutils.h"
 #include "mathutils.h"
 
-sea_t* SEA_create() {
+sea_t* SEA_create(u32 width, u32 height) {
 	sea_t* context = malloc(sizeof(sea_t));
 	if (context == NULL) {
 		printf("failed to alloc global context");
 		return 0;
 	}
+
+	context->resolution.x = width;
+	context->resolution.y = height;
 
 	return context;
 }
