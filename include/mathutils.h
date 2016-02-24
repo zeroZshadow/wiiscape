@@ -113,6 +113,8 @@ guVector RandomVectorInHemisphere(guVector* normal);
 
 guVector Vector(f32 x, f32 y, f32 z);
 
+guVector guVecReflect(guVector p, guVector n);
+
 void guVecMax(guVector* vector, f32 max);
 
 void guVecMin(guVector* vector, f32 min);

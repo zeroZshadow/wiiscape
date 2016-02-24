@@ -74,25 +74,37 @@ void SEA_draw(sea_t* sea) {
 	}
 }
 
-float hash(guVec2 p) {
+f32 hash(guVec2 p) {
 	float h = guVec2Dot(p, (guVec2) { 127.1, 311.7 });
 	float i;
 	return modff(sinf(h)*43758.5453123f, &i);
 }
 
-float noise(guVec2 p) {
+f32 noise(guVec2 p) {
 	guVec2 i, f;
 	guVec2Modf(p, &f, &i);
 
 	guVec2 tmp = (guVec2) { 3.0 - 2.0*f.x, 3.0 - 2.0*f.y };
 	guVec2 u = guVec2Mul(f, guVec2Mul(f, tmp));
 
-	float h0 = hash(i);
-	float h1 = hash(guVec2Add(i, (guVec2) { 1.0, 0.0 }));
-	float h2 = hash(guVec2Add(i, (guVec2) { 0.0, 1.0 }));
-	float h3 = hash(guVec2Add(i, (guVec2) { 1.0, 1.0 }));
+	f32 h0 = hash(i);
+	f32 h1 = hash(guVec2Add(i, (guVec2) { 1.0, 0.0 }));
+	f32 h2 = hash(guVec2Add(i, (guVec2) { 0.0, 1.0 }));
+	f32 h3 = hash(guVec2Add(i, (guVec2) { 1.0, 1.0 }));
 
 	return -1.0 + 2.0 * mix(mix(h0, h1, u.x), mix(h2, h3, u.x), u.y);
+}
+
+f32 diffuse(guVector n, guVector l, f32 p) {
+	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
+}
+f32 specular(guVector n, guVector l, guVector e, float s) {
+	float nrm = (s + 8.0) / (3.1415 * 8.0);
+
+	guVector reflect = guVecReflect(e, n);
+	float dot = muVecDotProduct(&reflect, &l);
+
+	return powf(fmaxf(dot, 0.0f), s) * nrm;
 }
 
 // sky
