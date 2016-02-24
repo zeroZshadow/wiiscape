@@ -19,7 +19,7 @@ sea_t* SEA_create(u32 width, u32 height) {
 	context->NUM_STEPS = 4;
 	context->PI = 3.1415;
 	context->EPSILON = 1e-3;
-	context->EPSILON_NRM = 0.1 / (float)height;
+	context->EPSILON_NRM = 0.1f / (float)width;
 
 	context->ITER_GEOMETRY = 2;
 	context->ITER_FRAGMENT = 4;
