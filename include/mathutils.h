@@ -109,8 +109,6 @@ void vecPerpendicular(guVector* vec, guVector* out);
 
 f32 fioraRand();
 
-guVector RandomVectorInHemisphere(guVector* normal);
-
 guVector Vector(f32 x, f32 y, f32 z);
 
 guVector guVecReflect(guVector p, guVector n);
