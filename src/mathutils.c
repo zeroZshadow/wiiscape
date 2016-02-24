@@ -178,3 +178,7 @@ guVector guVecReflect(guVector p, guVector n) {
 f32 smoothstep(f32 a, f32 b, f32 t) {
 	return mix(a, b, t);
 }
+
+f32 guVec2Mag(guVec2 uv) {
+	return sqrtf(uv.x*uv.x + uv.y * uv.y);
+}

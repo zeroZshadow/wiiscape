@@ -136,6 +136,8 @@ guVec2 guVec2Abs(guVec2 a);
 
 guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f);
 
+f32 guVec2Mag(guVec2 uv);
+
 f32 mix(f32 a, f32 b, f32 f);
 
 #endif

@@ -177,7 +177,7 @@ float map(sea_t* sea, guVector p, u8 iterations) {
 
 guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector eye, guVector dist) {
 	guVector neye = (guVector) { -eye.x, -eye.y, -eye.z };
-	f32 fresnel = 1 - fmaxf(guVecDotProduct(&n, &neye), 0);
+	f32 fresnel = 1 - fmaxf(muVecDotProduct(&n, &neye), 0);
 	fresnel = powf(fresnel, 3) * 0.65f;
 
 	guVector reflected = getSkyColor(guVecReflect(eye, n));
@@ -195,7 +195,7 @@ guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector ey
 		mix(refracted.z, reflected.z, fresnel),
 	};
 
-	f32 atten = fmaxf(1 - guVecDotProduct(&dist, &dist) * 0.001f, 0);
+	f32 atten = fmaxf(1 - muVecDotProduct(&dist, &dist) * 0.001f, 0);
 	f32 spec = specular(n, l, eye, 60);
 	color = (guVector) {
 		color.x + (sea->SEA_WATER_COLOR.x * (p.y - sea->SEA_HEIGHT) * 0.18f * atten) + spec,
@@ -215,7 +215,7 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 	n.x = map(sea, pX, sea->ITER_FRAGMENT) - n.y;
 	n.z = map(sea, pZ, sea->ITER_FRAGMENT) - n.y;
 	n.y = eps;
-	guVecNormalize(&n);
+	muVecNormalize(&n);
 	return n;
 }
 
@@ -230,30 +230,30 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
 
-	f32 time = sea->time * 0.3;
+	const f32 time = sea->time * 0.3;
 
 	// ray
 	//TODO Done once, do outside pixel loop
-	guVector ang = (guVector) { sinf(time*3), sinf(time)*0.2f+0.3f, time };
+	const guVector ang = (guVector) { sinf(time*3), sinf(time)*0.2f+0.3f, time };
 	guVector ori = (guVector) { 0, 3.5f, time * 5 };
 
 	guVector dir = (guVector) { uv.x, uv.y, -2 };
-	guVecNormalize(&dir);
-	dir.z += guVecMag(&dir) * 0.15f;
-	guVecNormalize(&dir);
+	muVecNormalize(&dir);
+	dir.z += guVec2Mag(uv) * 0.15f;
+	muVecNormalize(&dir);
 
 	Mtx dirMtx;
 	fromEuler(ang, dirMtx);
-	guVecMultiply(dirMtx, &dir, &dir);
+	muVecMultiply(dirMtx, &dir, &dir);
 
 	// tracing
 	guVector p;
 	heightMapTracing(ori, dir, &p);
 	guVector dist;
-	guVecSub(&p, &ori, &dist);
-	guVector n = getNormal(sea, p, guVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
+	muVecSub(&p, &ori, &dist);
+	const guVector n = getNormal(sea, p, muVecDotProduct(&dist, &dist) * sea->EPSILON_NRM);
 	guVector light = (guVector){ 0, 1, 0.8f };
-	guVecNormalize(&light);
+	muVecNormalize(&light);
 
 	guVector color_sky = getSkyColor(dir);
 	guVector color_sea = getSeaColor(sea, p, n, light, dir, dist);
