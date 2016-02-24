@@ -107,6 +107,8 @@ u8 vecMinAxis(guVector* vec);
 
 void vecPerpendicular(guVector* vec, guVector* out);
 
+f32 smoothstep(f32 a, f32 b, f32 t);
+
 f32 fioraRand();
 
 guVector Vector(f32 x, f32 y, f32 z);

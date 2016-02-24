@@ -181,3 +181,7 @@ guVector guVecReflect(guVector p, guVector n) {
 	guVecSub(&r, &p, &r);
 	return r;
 }
+
+f32 smoothstep(f32 a, f32 b, f32 t) {
+	return mix(a, b, t);
+}
