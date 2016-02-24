@@ -147,6 +147,22 @@ guVec2 guVec2Add(guVec2 a, guVec2 b) {
 	return (guVec2) { a.x + b.x, a.y + b.y };
 }
 
+guVec2 guVec2Sin(guVec2 a) {
+	return (guVec2) { sinf(a.x), sinf(a.y) };
+}
+
+guVec2 guVec2Cos(guVec2 a) {
+	return (guVec2) { cosf(a.x), cosf(a.y) };
+}
+
+guVec2 guVec2Abs(guVec2 a) {
+	return (guVec2) { fabs(a.x), fabs(a.y) };
+}
+
+guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f) {
+	return (guVec2) { mix(a.x, b.x, f.x), mix(a.y, b.y, f.y) };
+}
+
 f32 mix(f32 a, f32 b, f32 f)
 {
 	return a + f * (b - a);

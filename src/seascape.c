@@ -107,6 +107,19 @@ f32 specular(guVector n, guVector l, guVector e, float s) {
 	return powf(fmaxf(dot, 0.0f), s) * nrm;
 }
 
+f32 sea_octave(guVec2 uv, f32 choppy) {
+	const float n = noise(uv);
+	uv.x += n;
+	uv.y += n;
+
+	guVec2 wv = guVec2Abs(guVec2Sin(uv));
+	wv.x = 1.0f - wv.x; wv.y = 1.0f - wv.y;
+
+	guVec2 swv = guVec2Abs(guVec2Cos(uv));
+	wv = guVec2Mix(wv, swv, wv);
+	return powf(1.0 - powf(wv.x * wv.y, 0.65), choppy);
+}
+
 // sky
 guVector getSkyColor(guVector e) {
 	e.y = maxf(e.y, 0);
