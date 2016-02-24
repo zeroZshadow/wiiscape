@@ -266,5 +266,10 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 		powf(mix(color_sky.z, color_sea.z, mixfactor), 0.75f)
 	};
 
+	// Clamp like a boss
+	color.x = fminf(fmaxf(color.x, 0), 1);
+	color.y = fminf(fmaxf(color.y, 0), 1);
+	color.z = fminf(fmaxf(color.z, 0), 1);
+
 	return color;
 }
