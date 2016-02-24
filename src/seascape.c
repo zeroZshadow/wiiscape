@@ -262,7 +262,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	guVec2 uv;
 	//TODO Optimize with PS ops?
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
-	uv.y = (coord.y / sea->resolution.y) * 2 - 1;
+	uv.y = (1.0-(coord.y / sea->resolution.y)) * 2 - 1;
 
 	const f32 time = sea->time * 0.3;
 
