@@ -109,7 +109,8 @@ void fromEuler(guVector ang, Mtx m) {
 }
 
 inline f32 hash(guVec2 p) {
-	float h = guVec2Dot(p, (guVec2) { 127.1f, 311.7f });
+	guVec2 hv = (guVec2) { 127.1f, 311.7f };
+	float h = guVec2Dot(p, hv);
 	float n = sinf(h) * 43758.5453123;
 	return n - floor(n);
 }
@@ -124,10 +125,17 @@ inline f32 noise(guVec2 p) {
 	};
 	guVec2 u = guVec2Mul(f, guVec2Mul(f, tmp));
 
+	guVec2 uv1 = (guVec2) { 1.0, 0.0 };
+	guVec2 uv2 = (guVec2) { 0.0, 1.0 };
+	guVec2 uv3 = (guVec2) { 1.0, 1.0 };
+	muVec2Add(&i, &uv1, &uv1);
+	muVec2Add(&i, &uv2, &uv2);
+	muVec2Add(&i, &uv3, &uv3);
+
 	f32 h0 = hash(i);
-	f32 h1 = hash(guVec2Add(i, (guVec2) { 1.0, 0.0 }));
-	f32 h2 = hash(guVec2Add(i, (guVec2) { 0.0, 1.0 }));
-	f32 h3 = hash(guVec2Add(i, (guVec2) { 1.0, 1.0 }));
+	f32 h1 = hash(uv1);
+	f32 h2 = hash(uv2);
+	f32 h3 = hash(uv3);
 
 	float r = -1.0 + 2.0 * mix(mix(h0, h1, u.x), mix(h2, h3, u.x), u.y);
 
@@ -151,11 +159,13 @@ f32 sea_octave(guVec2 uv, f32 choppy) {
 	uv.x += n;
 	uv.y += n;
 
-	guVec2 wv = guVec2Abs(guVec2Sin(uv));
+	guVec2 wv = guVec2Sin(uv);
+	muVec2Abs(&wv, &wv);
 	wv.x = 1.0f - wv.x;
 	wv.y = 1.0f - wv.y;
 
-	guVec2 swv = guVec2Abs(guVec2Cos(uv));
+	guVec2 swv = guVec2Cos(uv);
+	muVec2Abs(&swv, &swv);
 	wv = guVec2Mix(wv, swv, wv);
 	return powf(1.0 - powf(wv.x * wv.y, 0.65), choppy);
 }
@@ -206,12 +216,11 @@ guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector ey
 
 	guVector reflected = getSkyColor(guVecReflect(eye, n));
 
-	f32 refractedDiffuse = diffuse(n, l, 80);	
-	guVector refracted = (guVector) {
-		sea->SEA_BASE.x + refractedDiffuse * sea->SEA_WATER_COLOR.x * 0.12f,
-		sea->SEA_BASE.y + refractedDiffuse * sea->SEA_WATER_COLOR.y * 0.12f,
-		sea->SEA_BASE.z + refractedDiffuse * sea->SEA_WATER_COLOR.z * 0.12f,
-	};
+	f32 refractedDiffuse = diffuse(n, l, 80);
+
+	guVector refracted;
+	muVecScale(&sea->SEA_WATER_COLOR, &refracted, refractedDiffuse * 0.12f);
+	muVecAdd(&sea->SEA_BASE, &refracted, &refracted);
 
 	guVector color = (guVector) {
 		mix(refracted.x, reflected.x, fresnel),
@@ -246,30 +255,31 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 	f32 tm = 0;
 	f32 tx = 1000;
+	guVector dirScaled;
 
-	const guVector hxVec = (guVector) {
-		ori.x + dir.x * tx,
-		ori.y + dir.y * tx,
-		ori.z + dir.z * tx
-	};
+	// Calculate hxVec
+	guVector hxVec;
+	muVecScale(&dir, &dirScaled, tx);
+	muVecAdd(&ori, &dirScaled, &hxVec);
+
 	f32 hx = map(sea, hxVec, sea->ITER_GEOMETRY);
 	if (hx > 0) {
 		return;
 	}
 
-	const guVector hmVec = (guVector) {
-		ori.x + dir.x * tm,
-		ori.y + dir.y * tm,
-		ori.z + dir.z * tm
-	};
+	// Calculate hmVec
+	guVector hmVec;
+	muVecScale(&dir, &dirScaled, tm);
+	muVecAdd(&ori, &dirScaled, &hmVec);
+
 	f32 hm = map(sea, hmVec, sea->ITER_GEOMETRY);
 	f32 tmid = 0;
 	u8 i;
 	for (i = 0; i < sea->NUM_STEPS; i++) {
 		tmid = mix(tm, tx, hm / (hm - hx));
-		p->x = ori.x + dir.x * tmid;
-		p->y = ori.y + dir.y * tmid;
-		p->z = ori.z + dir.z * tmid;
+		muVecScale(&dir, &dirScaled, tmid);
+		muVecAdd(&ori, &dirScaled, p);
+
 		const f32 hmid = map(sea, *p, sea->ITER_GEOMETRY);
 		if (hmid < 0) {
 			tx = tmid;
@@ -289,7 +299,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord, guVector ori, Mtx dirMtx) {
 
 	guVector dir = (guVector) { uv.x, uv.y, -2 };
 	muVecNormalize(&dir);
-	dir.z += guVec2Mag(uv) * 0.15f;
+	dir.z += muVec2Mag(&uv) * 0.15f;
 	muVecNormalize(&dir);
 
 	guVecMultiplySR(dirMtx, &dir, &dir);
