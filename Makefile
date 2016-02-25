@@ -31,10 +31,10 @@ TEXTURES	:=	textures
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		= -g -O3 -Wall -Winline -Wextra $(MACHDEP) $(INCLUDE)
+CFLAGS		= -g -Ofast -Wall -Winline -Wextra -ffast-math -mpaired -mmultiple $(MACHDEP) $(INCLUDE)
 CXXFLAGS	= $(CFLAGS)
 
-LDFLAGS		= -g $(MACHDEP) -Wl,-Map,$(notdir $@).map
+LDFLAGS		= -g $(MACHDEP) -Wl,-Map,$(notdir $@).map -mpaired
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project

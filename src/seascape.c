@@ -138,7 +138,7 @@ f32 diffuse(guVector n, guVector l, f32 p) {
 	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
 }
 f32 specular(guVector n, guVector l, guVector e, float s) {
-	float nrm = (s + 8.0f) * 0.0397899093f;
+	float nrm = (s + 8.0f) / (3.1415f * 8.0f);
 
 	guVector reflect = guVecReflect(e, n);
 	float dot = muVecDotProduct(&reflect, &l);
