@@ -149,7 +149,7 @@ static inline f32 diffuse(guVector n, guVector l, f32 p) {
 	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
 }
 
-f32 specular(guVector n, guVector l, guVector e, float s) {
+static inline f32 specular(guVector n, guVector l, guVector e, float s) {
 	float nrm = (s + 8.0f) / (3.1415f * 8.0f);
 
 	guVector reflect = guVecReflect(e, n);
@@ -175,7 +175,7 @@ static inline f32 sea_octave(guVec2 uv, f32 choppy) {
 }
 
 // sky
-guVector getSkyColor(guVector e) {
+static inline guVector getSkyColor(guVector e) {
 	e.y = fmaxf(e.y, 0);
 	guVector ret;
 	ret.x = powf(1 - e.y, 2);
@@ -185,7 +185,7 @@ guVector getSkyColor(guVector e) {
 }
 
 // sea
-float map(sea_t* sea, guVector p, u8 iterations) {
+static inline float map(sea_t* sea, guVector p, u8 iterations) {
 	f32 freq = sea->SEA_FREQ;
 	f32 amp_ = sea->SEA_HEIGHT;
 	f32 choppy = sea->SEA_CHOPPY;
@@ -213,7 +213,7 @@ float map(sea_t* sea, guVector p, u8 iterations) {
 	return p.y - h;
 }
 
-guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector eye, guVector dist) {
+static inline guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector eye, guVector dist) {
 	guVector neye = (guVector) { -eye.x, -eye.y, -eye.z };
 	f32 fresnel = 1 - fmaxf(muVecDotProduct(&n, &neye), 0);
 	fresnel = powf(fresnel, 3) * 0.65f;
@@ -244,7 +244,7 @@ guVector getSeaColor(sea_t* sea, guVector p, guVector n, guVector l, guVector ey
 }
 
 // tracing
-guVector getNormal(sea_t* sea, guVector p, f32 eps) {
+static inline guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 	guVector n;
 	guVector pX = (guVector) { p.x + eps, p.y, p.z };
 	guVector pZ = (guVector) { p.x, p.y, p.z + eps };
@@ -256,7 +256,7 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 	return n;
 }
 
-void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
+static inline void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 	f32 tm = 0;
 	f32 tx = 1000;
 	guVector dirScaled;
