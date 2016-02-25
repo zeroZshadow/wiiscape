@@ -6,6 +6,7 @@
 #define _MATHUTIL_H
 
 #include <ogc/gu.h>
+#include <math.h>
 
 typedef struct {
 	f32 a1, b1, a2, b2;
@@ -128,17 +129,31 @@ guVec2 guVec2Mul(guVec2 a, guVec2 b);
 guVec2 guVec2Add(guVec2 a, guVec2 b);
 
 guVec2 guVec2MatMul(Mtx22 m, guVec2 v);
-guVec2 guVec2Sin(guVec2 a);
 
-guVec2 guVec2Cos(guVec2 a);
+static inline guVec2 guVec2Sin(guVec2 a) {
+	return (guVec2) {
+		sinf(a.x),
+		sinf(a.y)
+	};
+}
+
+static inline guVec2 guVec2Cos(guVec2 a) {
+	return (guVec2) {
+		cosf(a.x),
+		cosf(a.y)
+	};
+}
 
 guVec2 guVec2Abs(guVec2 a);
 
 guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f);
 
-f32 guVec2Mag(guVec2 uv);
+f32 guVec2Mag(guVec2* uv);
 
-f32 mix(f32 a, f32 b, f32 f);
+static inline f32 mix(f32 a, f32 b, f32 f)
+{
+	return f * (b - a) + a;
+}
 
 #endif
 

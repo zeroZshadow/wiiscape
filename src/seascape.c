@@ -48,7 +48,7 @@ void SEA_draw(sea_t* sea) {
 	u32 x, y, xb, yb;
 
 	sea->time += 0.5f;
-	sea->SEA_TIME = sea->time * sea->SEA_SPEED;
+	sea->SEA_TIME = 0;// sea->time * sea->SEA_SPEED;
 
 	const f32 time = 0;// sea->time * 0.3;
 
@@ -166,7 +166,7 @@ f32 sea_octave(guVec2 uv, f32 choppy) {
 
 	guVec2 swv = guVec2Cos(uv);
 	muVec2Abs(&swv, &swv);
-	wv = guVec2Mix(wv, swv, wv);
+	muVec2Mix(&wv, &swv, &wv, &wv);
 	return powf(1.0 - powf(wv.x * wv.y, 0.65), choppy);
 }
 

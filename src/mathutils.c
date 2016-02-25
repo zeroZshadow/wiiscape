@@ -1,6 +1,5 @@
 #include "mathutils.h"
 #include "mu.h"
-#include <math.h>
 #include <ogc/gu.h>
 
 void EulerToQuaternion(guQuaternion* q, const f32 rX, const f32 rY, const f32 rZ) {
@@ -154,19 +153,8 @@ guVec2 guVec2MatMul(Mtx22 m, guVec2 v) {
 		m.b1 * v.x + m.b2 * v.y
 	};
 }
-guVec2 guVec2Sin(guVec2 a) {
-	return (guVec2) {
-		sinf(a.x),
-		sinf(a.y)
-	};
-}
 
-guVec2 guVec2Cos(guVec2 a) {
-	return (guVec2) {
-		cosf(a.x),
-		cosf(a.y)
-	};
-}
+
 
 guVec2 guVec2Abs(guVec2 a) {
 	return (guVec2) {
@@ -182,11 +170,6 @@ guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f) {
 	};
 }
 
-f32 mix(f32 a, f32 b, f32 f)
-{
-	return f * (b - a) + a;
-}
-
 guVector guVecReflect(guVector p, guVector n) {
 	guVector r;
 	float dot = muVecDotProduct(&p, &n) * 2;
@@ -200,6 +183,6 @@ f32 smoothstep(f32 a, f32 b, f32 t) {
 	return t*t*(3-2*t);
 }
 
-f32 guVec2Mag(guVec2 uv) {
-	return sqrtf(uv.x*uv.x + uv.y * uv.y);
+f32 guVec2Mag(guVec2* uv) {
+	return sqrtf(uv->x*uv->x + uv->y * uv->y);
 }

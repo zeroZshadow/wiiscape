@@ -2,6 +2,7 @@
 #include <gccore.h>
 #include <debug.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "gxutils.h"
 #include "seascape.h"
@@ -18,8 +19,8 @@ int main() { //int argc, char **argv) {
 	GXU_init();
 
 	// Frame buffer
-	u16 renderWidth = vmode->viWidth >> 2;
-	u16 renderHeight = vmode->viHeight >> 2;
+	u16 renderWidth = vmode->viWidth >> 1;
+	u16 renderHeight = vmode->viHeight >> 1;
 
 	GXU_createPixelBuffer(renderWidth, renderHeight);
 	GXU_clearPixelBuffer(0xFF000000);
@@ -28,7 +29,7 @@ int main() { //int argc, char **argv) {
 	GXU_renderPixelBuffer();
 	GXU_done();
 
-	CON_EnableGecko(1, FALSE);
+	CON_EnableGecko(EXI_CHANNEL_1, FALSE);
 
 	sea_t* sea = SEA_create(renderWidth, renderHeight);
 

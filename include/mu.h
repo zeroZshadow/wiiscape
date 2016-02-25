@@ -445,5 +445,35 @@ static inline f32 muFastDiv(f32 a, f32 b) {
 	return res;
 }
 
+static inline void muVec2Mix(guVec2* a, guVec2* b, guVec2* f, guVec2* dst) {
+	dst->x = mix(a->x, b->x, f->x);
+	dst->y = mix(a->y, b->y, f->y);
+
+	/*
+	register f32 f0, f1, f2;
+	asm volatile(
+		// f0 = a; f1 = b
+		"psq_l %[f0], 0(%[a]), 0, 0;"
+		"psq_l %[f1], 0(%[b]), 0, 0;"
+
+		// f2 = b - a
+		"ps_sub %[f2], %[f1], %[f0];"
+
+		// f1 = f
+		"psq_l %[f1], 0(%[f]), 0, 0;"
+
+		// f3 = f * f2 + a
+		"ps_madd %[f0], %[f1], %[f2], %[f0];"
+
+		// dst = f3
+		"psq_st %[f0], %[dst], 0, 0;"
+		: [dst] "=o" (*dst),
+		[f0] "=&f" (f0),
+		[f1] "=&f" (f1),
+		[f2] "=&f" (f2)
+		: [a] "r"(a), [b] "r"(b), [f] "r"(f)
+		);
+	*/
+}
 
 #endif
