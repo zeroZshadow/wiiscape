@@ -16,9 +16,7 @@ sea_t* SEA_create(u32 width, u32 height) {
 
 	context->resolution = (guVec2){ width, height };
 
-	context->NUM_STEPS = 4;
-	context->PI = 3.1415;
-	context->EPSILON = 1e-3;
+	context->NUM_STEPS = 8;
 	context->EPSILON_NRM = 0.1f / (float)width;
 
 	context->ITER_GEOMETRY = 2;
@@ -29,10 +27,12 @@ sea_t* SEA_create(u32 width, u32 height) {
 	context->SEA_FREQ = 0.16;
 	context->SEA_BASE = (guVector){ 0.1, 0.19, 0.22 };
 	context->SEA_WATER_COLOR = (guVector){ 0.8, 0.9, 0.6 };
-	context->octave_m = (Mtx22) { 1.6, 1.6, 1.2, -1.2 };
+	context->octave_m = (Mtx22) { 1.6, 1.2, -1.2, 1.6 };
 
 	return context;
 }
+
+void fromEuler(guVector ang, Mtx m);
 
 void SEA_draw(sea_t* sea) {
 	GXColor datatile[TILESIZE*TILESIZE];
@@ -48,6 +48,15 @@ void SEA_draw(sea_t* sea) {
 	sea->time += 0.5f;
 	sea->SEA_TIME = sea->time * sea->SEA_SPEED;
 
+	const f32 time = 0;// sea->time * 0.3;
+
+	// Construct ray
+	const guVector ang = (guVector) { sinf(time * 3), sinf(time) * 0.2f + 0.3f, time };
+	guVector ori = (guVector) { 0, 3.5f, time * 5 };
+
+	Mtx dirMtx;
+	fromEuler(ang, dirMtx);
+
 	for (yb = 0; yb < height_blocks; ++yb) {
 		for (xb = 0; xb < width_blocks; ++xb) {
 			//This is a single tile
@@ -60,7 +69,7 @@ void SEA_draw(sea_t* sea) {
 					coord.y = (yb * TILESIZE) + y;
 
 					//Get pixel color for tile
-					guVector color = SEA_pixel(sea, coord);
+					guVector color = SEA_pixel(sea, coord, ori, dirMtx);
 
 					//Convert to u32
 					//TODO: Clamp color?
@@ -97,13 +106,13 @@ void fromEuler(guVector ang, Mtx m) {
 
 }
 
-f32 hash(guVec2 p) {
+inline f32 hash(guVec2 p) {
 	float h = guVec2Dot(p, (guVec2) { 127.1f, 311.7f });
 	float n = sinf(h) * 43758.5453123;
 	return n - floor(n);
 }
 
-f32 noise(guVec2 p) {
+inline f32 noise(guVec2 p) {
 	guVec2 f, i;
 	guVec2Modf(p, &f, &i);
 
@@ -232,21 +241,21 @@ guVector getNormal(sea_t* sea, guVector p, f32 eps) {
 	return n;
 }
 
-float heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
+void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 	f32 tm = 0;
 	f32 tx = 1000;
 
-	guVector hxVec = (guVector) {
+	const guVector hxVec = (guVector) {
 		ori.x + dir.x * tx,
 		ori.y + dir.y * tx,
 		ori.z + dir.z * tx
 	};
 	f32 hx = map(sea, hxVec, sea->ITER_GEOMETRY);
 	if (hx > 0) {
-		return tx;
+		return;
 	}
 
-	guVector hmVec = (guVector) {
+	const guVector hmVec = (guVector) {
 		ori.x + dir.x * tm,
 		ori.y + dir.y * tm,
 		ori.z + dir.z * tm
@@ -259,7 +268,7 @@ float heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 		p->x = ori.x + dir.x * tmid;
 		p->y = ori.y + dir.y * tmid;
 		p->z = ori.z + dir.z * tmid;
-		f32 hmid = map(sea, *p, sea->ITER_GEOMETRY);
+		const f32 hmid = map(sea, *p, sea->ITER_GEOMETRY);
 		if (hmid < 0) {
 			tx = tmid;
 			hx = hmid;
@@ -268,29 +277,19 @@ float heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 			hm = hmid;
 		}
 	}
-	return tmid;
 }
 
-guVector SEA_pixel(sea_t* sea, guVec2 coord) {
+guVector SEA_pixel(sea_t* sea, guVec2 coord, guVector ori, Mtx dirMtx) {
 	guVec2 uv;
 	//TODO Optimize with PS ops?
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (1.0-(coord.y / sea->resolution.y)) * 2 - 1;
-
-	const f32 time = 0;// sea->time * 0.3;
-
-	// ray
-	//TODO Done once, do outside pixel loop
-	const guVector ang = (guVector) { sinf(time*3), sinf(time)*0.2f+0.3f, time };
-	guVector ori = (guVector) { 0, 3.5f, time * 5 };
 
 	guVector dir = (guVector) { uv.x, uv.y, -2 };
 	muVecNormalize(&dir);
 	dir.z += guVec2Mag(uv) * 0.15f;
 	muVecNormalize(&dir);
 
-	Mtx dirMtx;
-	fromEuler(ang, dirMtx);
 	guVecMultiplySR(dirMtx, &dir, &dir);
 
 	// tracing

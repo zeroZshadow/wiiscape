@@ -10,8 +10,6 @@ typedef struct {
 	f32 time;
 
 	u8 NUM_STEPS;
-	float PI;
-	float EPSILON;
 	float EPSILON_NRM;
 	u8 ITER_GEOMETRY;
 	u8 ITER_FRAGMENT;
@@ -29,6 +27,6 @@ sea_t* SEA_create();
 
 void SEA_draw(sea_t* sea);
 
-guVector SEA_pixel(sea_t* sea, guVec2 coord);
+guVector SEA_pixel(sea_t* sea, guVec2 coord, guVector ori, Mtx dirMtx);
 
 #endif
