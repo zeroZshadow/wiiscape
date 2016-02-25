@@ -16,7 +16,7 @@ sea_t* SEA_create(u32 width, u32 height) {
 
 	context->resolution = (guVec2){ width, height };
 
-	context->NUM_STEPS = 3;
+	context->NUM_STEPS = 4;
 	context->PI = 3.1415;
 	context->EPSILON = 1e-3;
 	context->EPSILON_NRM = 0.1f / (float)width;
@@ -45,8 +45,8 @@ void SEA_draw(sea_t* sea) {
 
 	u32 x, y, xb, yb;
 
-	sea->time += 0.1f;
-	sea->SEA_TIME = 0; // sea->time * sea->SEA_SPEED;
+	sea->time += 0.5f;
+	sea->SEA_TIME = sea->time * sea->SEA_SPEED;
 
 	for (yb = 0; yb < height_blocks; ++yb) {
 		for (xb = 0; xb < width_blocks; ++xb) {
@@ -277,7 +277,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
 	uv.y = (1.0-(coord.y / sea->resolution.y)) * 2 - 1;
 
-	const f32 time = 0;//sea->time * 0.3;
+	const f32 time = 0;// sea->time * 0.3;
 
 	// ray
 	//TODO Done once, do outside pixel loop
@@ -309,7 +309,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 
 	// color
 	guVector color = (guVector) {
-		powf(mix(color_sky.x, color_sea.y, mixfactor), 0.75f),
+		powf(mix(color_sky.x, color_sea.x, mixfactor), 0.75f),
 		powf(mix(color_sky.y, color_sea.y, mixfactor), 0.75f),
 		powf(mix(color_sky.z, color_sea.z, mixfactor), 0.75f)
 	};
