@@ -349,6 +349,10 @@ static inline f32 muVec2Mag(guVec2 *a) {
 }
 
 static inline f32 muVec2Dot(guVec2 *a, guVec2 *b) {
+
+	return (a->x * b->x) + (a->y * b->y);
+
+	/*
 	register f32 res, f0, f1, f2;
 	asm volatile(
 		"psq_l		%[f0], 0(%[a]), 0, 0;"
@@ -363,6 +367,7 @@ static inline f32 muVec2Dot(guVec2 *a, guVec2 *b) {
 	);
 
 	return res;
+	*/
 }
 
 static inline f32 muSqrtf(register float val) {
@@ -511,5 +516,4 @@ static inline void muVec2Modf(guVec2 v, guVec2* f, guVec2* i) {
 	f->x = v.x - i->x;
 	f->y = v.y - i->y;
 }
-
 #endif

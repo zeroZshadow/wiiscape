@@ -110,7 +110,7 @@ void fromEuler(guVector ang, Mtx m) {
 
 static inline f32 hash(guVec2 p) {
 	guVec2 hv = (guVec2) { 127.1f, 311.7f };
-	float h = guVec2Dot(p, hv);
+	float h = muVec2Dot(&p, &hv);
 	float n = sinf(h) * 43758.5453123;
 	return n - floorf(n);
 }
