@@ -434,5 +434,16 @@ static inline f32 muVecSum(guVector *a) {
 	return a->x + a->y + a->z;
 }
 
+static inline f32 muFastDiv(f32 a, f32 b) {
+	register f32 res, tmp;
+	asm("fres %[tmp], %[b];"
+		"fmuls %[out], %[a], %[tmp];"
+		: [out] "=fr" (res),
+		[tmp] "=&fr" (tmp)
+		: [a] "f" (a), [b] "f" (b)
+	);
+	return res;
+}
+
 
 #endif

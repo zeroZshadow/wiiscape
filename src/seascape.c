@@ -276,7 +276,7 @@ void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 	f32 tmid = 0;
 	u8 i;
 	for (i = 0; i < sea->NUM_STEPS; i++) {
-		tmid = mix(tm, tx, hm / (hm - hx));
+		tmid = mix(tm, tx, muFastDiv(hm, hm-hx));
 		muVecScale(&dir, &dirScaled, tmid);
 		muVecAdd(&ori, &dirScaled, p);
 
