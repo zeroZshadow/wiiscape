@@ -316,7 +316,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord, guVector ori, Mtx dirMtx) {
 
 	guVector color_sky = getSkyColor(dir);
 	guVector color_sea = getSeaColor(sea, p, n, light, dir, dist);
-	f32 mixfactor = pow(smoothstep(0, -0.05f, dir.y), 0.3f);
+	f32 mixfactor = powf(smoothstep(0, -0.05f, dir.y), 0.3f);
 
 	// color
 	guVector color = (guVector) {
