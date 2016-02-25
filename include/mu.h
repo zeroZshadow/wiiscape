@@ -35,6 +35,11 @@ static inline void muVecAdd(guVector *a, guVector *b, guVector *ab) {
 }
 
 static inline void muVec2Add(guVec2 *a, guVec2 *b, guVec2 *ab) {
+
+	ab->x = a->x + b->x;
+	ab->y = a->y + b->y;
+
+	/*
 	register f32 f0, f1, f2;
 	asm volatile(
 		"psq_l		%[f0], 0(%[a]), 0, 0;"
@@ -47,9 +52,16 @@ static inline void muVec2Add(guVec2 *a, guVec2 *b, guVec2 *ab) {
 		[f2] "=&f" (f2)
 		: [a] "r"(a), [b] "r"(b)
 		);
+	*/
 }
 
 static inline void muVecSub(guVector *a, guVector *b, guVector *ab) {
+
+	ab->x = a->x - b->x;
+	ab->y = a->y - b->y;
+	ab->z = a->z - b->z;
+
+	/*
 	register f32 f0, f1, f2, f3, f4, f5;
 	asm volatile(
 		"psq_l		%[f0], 0(%[a]), 0, 0;"
@@ -69,9 +81,15 @@ static inline void muVecSub(guVector *a, guVector *b, guVector *ab) {
 		  [f5] "=&f" (f5)
 		: [a] "r"(a), [b] "r"(b)
 	);
+	*/
 }
 
 static inline void muVec2Sub(guVec2 *a, guVec2 *b, guVec2 *ab) {
+
+	ab->x = a->x - b->x;
+	ab->y = a->y - b->y;
+
+	/*
 	register f32 f0, f1, f2;
 	asm volatile(
 		"psq_l		%[f0], 0(%[a]), 0, 0;"
@@ -83,10 +101,16 @@ static inline void muVec2Sub(guVec2 *a, guVec2 *b, guVec2 *ab) {
 		[f1] "=&f" (f1),
 		[f2] "=&f" (f2)
 		: [a] "r"(a), [b] "r"(b)
-		);
+	);
+	*/
 }
 
 static inline void muVec2Mul(guVec2 *a, guVec2 *b, guVec2 *ab) {
+
+	ab->x = a->x * b->x;
+	ab->y = a->y * b->y;
+
+	/*
 	register f32 f0, f1, f2;
 	asm volatile(
 		"psq_l		%[f0], 0(%[a]), 0, 0;"
@@ -98,7 +122,8 @@ static inline void muVec2Mul(guVec2 *a, guVec2 *b, guVec2 *ab) {
 		[f1] "=&f" (f1),
 		[f2] "=&f" (f2)
 		: [a] "r"(a), [b] "r"(b)
-		);
+	);
+	*/
 }
 
 static inline void muVecScale(guVector *src, guVector *dst, f32 scale) {
@@ -399,6 +424,10 @@ static inline void muVecAbs(guVector *src, guVector *dst) {
 }
 
 static inline void muVec2Abs(guVec2* src, guVec2* dst) {
+	dst->x = fabsf(src->x);
+	dst->y = fabsf(src->y);
+
+	/*
 	register f32 f0, f1;
 	asm volatile(
 		"psq_l		%[f0], 0(%[src]), 0, 0;"
@@ -409,7 +438,7 @@ static inline void muVec2Abs(guVec2* src, guVec2* dst) {
 		[f1] "=&f" (f1)
 		: [src] "r"(src)
 		);
-
+	*/
 }
 
 static inline void muVecMulVec(guVector *a, guVector *b, guVector *dst) {
@@ -474,6 +503,13 @@ static inline void muVec2Mix(guVec2* a, guVec2* b, guVec2* f, guVec2* dst) {
 		: [a] "r"(a), [b] "r"(b), [f] "r"(f)
 		);
 	*/
+}
+
+static inline void muVec2Modf(guVec2 v, guVec2* f, guVec2* i) {
+	i->x = floorf(v.x);
+	i->y = floorf(v.y);
+	f->x = v.x - i->x;
+	f->y = v.y - i->y;
 }
 
 #endif

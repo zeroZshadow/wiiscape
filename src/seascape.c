@@ -108,22 +108,25 @@ void fromEuler(guVector ang, Mtx m) {
 
 }
 
-inline f32 hash(guVec2 p) {
+static inline f32 hash(guVec2 p) {
 	guVec2 hv = (guVec2) { 127.1f, 311.7f };
 	float h = guVec2Dot(p, hv);
 	float n = sinf(h) * 43758.5453123;
 	return n - floorf(n);
 }
 
-inline f32 noise(guVec2 p) {
+static inline f32 noise(guVec2 p) {
 	guVec2 f, i;
-	guVec2Modf(p, &f, &i);
+	muVec2Modf(p, &f, &i);
 
 	guVec2 tmp = (guVec2) {
 		3.0 - 2.0 * f.x,
 		3.0 - 2.0 * f.y
 	};
-	guVec2 u = guVec2Mul(f, guVec2Mul(f, tmp));
+
+	guVec2 u;
+	muVec2Mul(&f, &tmp, &u);
+	muVec2Mul(&f, &u, &u);
 
 	guVec2 uv1 = (guVec2) { 1.0, 0.0 };
 	guVec2 uv2 = (guVec2) { 0.0, 1.0 };
@@ -142,9 +145,10 @@ inline f32 noise(guVec2 p) {
 	return r;
 }
 
-f32 diffuse(guVector n, guVector l, f32 p) {
+static inline f32 diffuse(guVector n, guVector l, f32 p) {
 	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
 }
+
 f32 specular(guVector n, guVector l, guVector e, float s) {
 	float nrm = (s + 8.0f) / (3.1415f * 8.0f);
 
@@ -154,7 +158,7 @@ f32 specular(guVector n, guVector l, guVector e, float s) {
 	return powf(fmaxf(dot, 0.0f), s) * nrm;
 }
 
-f32 sea_octave(guVec2 uv, f32 choppy) {
+static inline f32 sea_octave(guVec2 uv, f32 choppy) {
 	const float n = noise(uv);
 	uv.x += n;
 	uv.y += n;
