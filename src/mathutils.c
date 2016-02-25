@@ -184,7 +184,7 @@ guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f) {
 
 f32 mix(f32 a, f32 b, f32 f)
 {
-	return f * (b - a) + a; 
+	return f * (b - a) + a;
 }
 
 guVector guVecReflect(guVector p, guVector n) {

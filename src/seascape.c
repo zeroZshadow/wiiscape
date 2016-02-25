@@ -15,6 +15,8 @@ sea_t* SEA_create(u32 width, u32 height) {
 	}
 
 	context->resolution = (guVec2){ width, height };
+	context->aspectRatio = context->resolution.x / context->resolution.y;
+	context->revResolution = (guVec2) { 1 / (f32)width, 1 / (f32)height };
 
 	context->NUM_STEPS = 8;
 	context->EPSILON_NRM = 0.1f / (float)width;
@@ -136,7 +138,7 @@ f32 diffuse(guVector n, guVector l, f32 p) {
 	return powf(muVecDotProduct(&n, &l) * 0.4f + 0.6f, p);
 }
 f32 specular(guVector n, guVector l, guVector e, float s) {
-	float nrm = (s + 8.0f) / (3.1415f * 8.0f);
+	float nrm = (s + 8.0f) * 0.0397899093f;
 
 	guVector reflect = guVecReflect(e, n);
 	float dot = muVecDotProduct(&reflect, &l);
@@ -282,8 +284,8 @@ void heightMapTracing(sea_t* sea, guVector ori, guVector dir, guVector* p) {
 guVector SEA_pixel(sea_t* sea, guVec2 coord, guVector ori, Mtx dirMtx) {
 	guVec2 uv;
 	//TODO Optimize with PS ops?
-	uv.x = ((coord.x / sea->resolution.x) * 2 - 1) * (sea->resolution.x / sea->resolution.y);
-	uv.y = (1.0-(coord.y / sea->resolution.y)) * 2 - 1;
+	uv.x = ((coord.x * sea->revResolution.x) * 2 - 1) * sea->aspectRatio;
+	uv.y = (1.0-(coord.y * sea->revResolution.y)) * 2 - 1;
 
 	guVector dir = (guVector) { uv.x, uv.y, -2 };
 	muVecNormalize(&dir);

@@ -7,6 +7,8 @@
 
 typedef struct {
 	guVec2 resolution;
+	guVec2 revResolution;
+	f32 aspectRatio;
 	f32 time;
 
 	u8 NUM_STEPS;
