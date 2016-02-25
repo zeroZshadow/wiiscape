@@ -124,8 +124,10 @@ void guVecMin(guVector* vector, f32 min) {
 }
 
 void guVec2Modf(guVec2 v, guVec2* f, guVec2* i) {
-	f->x = modff(v.x, &i->x);
-	f->y = modff(v.y, &i->y);
+	i->x = floorf(v.x);
+	i->y = floorf(v.y);
+	f->x = v.x - i->x;
+	f->y = v.y - i->y;
 }
 
 f32 guVec2Dot(guVec2 a, guVec2 b) {
@@ -182,7 +184,7 @@ guVec2 guVec2Mix(guVec2 a, guVec2 b, guVec2 f) {
 
 f32 mix(f32 a, f32 b, f32 f)
 {
-	return a + f * (b - a);
+	return a + f * (b - a); 
 }
 
 guVector guVecReflect(guVector p, guVector n) {

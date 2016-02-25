@@ -16,20 +16,20 @@ sea_t* SEA_create(u32 width, u32 height) {
 
 	context->resolution = (guVec2){ width, height };
 
-	context->NUM_STEPS = 2;
+	context->NUM_STEPS = 3;
 	context->PI = 3.1415;
 	context->EPSILON = 1e-3;
 	context->EPSILON_NRM = 0.1f / (float)width;
 
-	context->ITER_GEOMETRY = 1;
-	context->ITER_FRAGMENT = 1;
+	context->ITER_GEOMETRY = 2;
+	context->ITER_FRAGMENT = 4;
 	context->SEA_HEIGHT = 0.6;
 	context->SEA_CHOPPY = 4;
 	context->SEA_SPEED = 0.8;
 	context->SEA_FREQ = 0.16;
 	context->SEA_BASE = (guVector){ 0.1, 0.19, 0.22 };
 	context->SEA_WATER_COLOR = (guVector){ 0.8, 0.9, 0.6 };
-	context->octave_m = (Mtx22) { 1.6, 1.2, -1.2, 1.6 };
+	context->octave_m = (Mtx22) { 1.6, 1.6, 1.2, -1.2 };
 
 	return context;
 }
@@ -99,13 +99,11 @@ void fromEuler(guVector ang, Mtx m) {
 
 f32 hash(guVec2 p) {
 	float h = guVec2Dot(p, (guVec2) { 127.1f, 311.7f });
-	float i;
-	return modff(sinf(h) * 43758.5453123, &i);
+	float n = sinf(h) * 43758.5453123;
+	return n - floor(n);
 }
 
 f32 noise(guVec2 p) {
-	return 0;
-
 	guVec2 f, i;
 	guVec2Modf(p, &f, &i);
 
@@ -143,7 +141,8 @@ f32 sea_octave(guVec2 uv, f32 choppy) {
 	uv.y += n;
 
 	guVec2 wv = guVec2Abs(guVec2Sin(uv));
-	wv.x = 1.0f - wv.x; wv.y = 1.0f - wv.y;
+	wv.x = 1.0f - wv.x;
+	wv.y = 1.0f - wv.y;
 
 	guVec2 swv = guVec2Abs(guVec2Cos(uv));
 	wv = guVec2Mix(wv, swv, wv);
@@ -295,7 +294,7 @@ guVector SEA_pixel(sea_t* sea, guVec2 coord) {
 	guVecMultiplySR(dirMtx, &dir, &dir);
 
 	// tracing
-	guVector p = (guVector) {0,0};
+	guVector p = (guVector) {0,0,0};
 	heightMapTracing(sea, ori, dir, &p);
 
 	guVector dist;
