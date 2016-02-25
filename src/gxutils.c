@@ -103,15 +103,15 @@ void GXU_createPixelBuffer(u16 width, u16 height) {
 
 	screenTexObject = malloc(sizeof(GXTexObj));
 	if (screenTexObject == NULL) {
-		printf("failed to alloc screenTexObject");
+		printf("failed to alloc screenTexObject\n");
 		return;
 	}
 
 	u32 buffersize = GX_GetTexBufferSize(width, height, GX_TF_RGBA8, GX_FALSE, 0);
-	printf("allocating screenBuffer [%u]", buffersize);
+	printf("allocating screenBuffer [%u]\n", buffersize);
 	screenBuffer = memalign(32, buffersize);
 	if (screenBuffer == NULL) {
-		printf("failed to alloc screenBuffer");
+		printf("failed to alloc screenBuffer\n");
 		return;
 	}
 

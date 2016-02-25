@@ -1,10 +1,12 @@
 /* SDK Libraries */
 #include <gccore.h>
+#include <debug.h>
 #include <stdio.h>
 
 #include "gxutils.h"
 #include "seascape.h"
 #include "mathutils.h"
+#include "timer.h"
 
 BOOL isRunning;
 void OnResetCalled();
@@ -26,11 +28,17 @@ int main() { //int argc, char **argv) {
 	GXU_renderPixelBuffer();
 	GXU_done();
 
+	CON_EnableGecko(1, FALSE);
+
 	sea_t* sea = SEA_create(renderWidth, renderHeight);
 
 	isRunning = TRUE;
 	while (isRunning) {
+		u64 start = timer_gettime();
 		SEA_draw(sea);
+		u64 time = timer_gettime() - start;
+
+		printf("Frame time: %llu\n", time);
 
 		// Render buffer to screen
 		//TODO: Throw this on a thread

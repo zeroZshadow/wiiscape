@@ -34,7 +34,7 @@ TEXTURES	:=	textures
 CFLAGS		= -g -Ofast -Wall -Winline -Wextra -ffast-math -mpaired -mmultiple $(MACHDEP) $(INCLUDE)
 CXXFLAGS	= $(CFLAGS)
 
-LDFLAGS		= -g $(MACHDEP) -Wl,-Map,$(notdir $@).map -mpaired
+LDFLAGS		= -g $(MACHDEP) -Wl,-Map,$(notdir $@).map -mpaired -ldb
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
