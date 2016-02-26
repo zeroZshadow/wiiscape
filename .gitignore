@@ -30,3 +30,5 @@
 *.opensdf
 *.user
 .vs
+*~
+dumps
